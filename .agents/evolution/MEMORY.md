@@ -109,3 +109,8 @@
 - 情境：hygiene 的 constraints 失败=`packages/client/schema-form`、`web-react` 空壳残留（refactor(client) 合并后 lib/node_modules 未清理，无 package.json）；vendor rescope 失败=`knip.json` 的 `packages/util/home` 块被上游更新移走（moved）+ 中文文档链接修复成 `../rescope.zh.md` 后检查脚本仍期望 `../rescope.md`（partial）。
 - 教训：这类漂移是「高质量」杠杆的真实信号——重构 PR 合并后应跑 `pnpm run clean` + `pnpm run hygiene` 验证；rescope/检查脚本的期望片段会随仓库结构漂移，hygiene 基线能系统抓住它们；修复=更新期望片段对照当前文件事实（而非改文件迁就脚本）。
 - 适用：001 落地、重构后验证、vendor 同步轮次；不适用于无漂移语义的全新代码审计。
+
+### 2026-08-27 · 并发实例检测：状态文件被并行写入时先核对再收敛
+- 情境：第八轮与每日 08:05 定时实例并行运行同一 checkout——对方先完成提交（reflog 显示 08:05:38 commit `12d9b57eb0`）并推送 fork；我方编辑状态文件时收到「file changed since it was read」，经 reflog/文件 mtime 核实为另一实例所为，且其内容与我方独立发现高度一致（hygiene 11/13、同样 2 失败与修复配方、在途 6→7、漂移 ahead=1/behind=0）。
+- 教训：编辑状态文件报「file changed」时先查 `git reflog` 与文件 mtime 判断是否并行实例而非自身失误；若对方已完整提交推送且结论一致，只做补充性收敛（缺失事实/CI 归因/并发记录），不重复整轮内容；并行跑同一轮会互相踩状态文件（last-writer-wins），排程上应避免同日多实例；双方独立复现同一结果是高置信度交叉验证。
+- 适用：定时自动化与手动会话并存的场景；不适用于单实例连续运行（无并发写入）。
