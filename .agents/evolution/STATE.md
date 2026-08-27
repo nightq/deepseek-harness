@@ -70,7 +70,7 @@ _最后更新：2026-08-27（第八轮，研究模式：Cordis 生态 + 技能�
 | 合并 PR 数 | 0 | 状态持续推送 fork `evolve/state`，PR 创建被拒（权限），待人工建 PR |
 | 回滚数 | 0 | 无已合并进化改动 |
 | 门禁失败数 | 0（进化改动触发）；**基线采集 2 失败** | 无代码改动未触发门禁；第八轮研究模式实测 hygiene 基线 11/13 绿、2 失败（constraints + vendor rescope，仓库现状弱点非进化改动导致，修复清单见 001） |
-| 与上游漂移 | **ahead=1 / behind=0（本轮实测）** | HEAD=99d9158c72（第七轮 chore(evolve) 状态提交）；origin/master=b150a551b8/dsh-v0.1.1-rc.2（2026-08-21 20:03 起上游无新提交）；本地领先的 1 个提交为进化提交，rebase 无意义 |
+| 与上游漂移 | **ahead=2 / behind=0（本轮实测）** | HEAD=54d902e23a（第八轮两个 chore(evolve) 状态提交：12d9b57eb0 状态 + 54d902e23a 收敛补充）；origin/master=b150a551b8/dsh-v0.1.1-rc.2（2026-08-21 20:03 起上游无新提交）；领先提交全为进化提交，rebase 无意义 |
 
 ## 待人工决策
 
@@ -79,7 +79,7 @@ _最后更新：2026-08-27（第八轮，研究模式：Cordis 生态 + 技能�
 - **018 落地形态（需人工决策）**：agent-loop 会话级步骤/迭代预算缺口第六轮只读核实（行级证据：agent.ts while 循环无上限 + 外部三源共识）。落地形态 A）改 `packages/core/agent-loop`（非受保护路径，但需同步 docs/architecture.md + SDK 表面 + testing policy 快照）；B）guard 插件事件计数熔断（受保护路径需授权）。与 016（token/成本预算）同族，建议一起出设计。
 - **上游同步与在途功能**：~~本地落后 origin/master 743 提交~~ **已解决**——2026-08-24 10:59 人工 merge（commit `89ed947a41`）；第八轮实测 ahead=1（第七轮 chore(evolve) 状态提交 99d9158c72）/ behind=0，上游自 b150a551b8 无新提交。**在途 7 项**（较第七轮 +1）：3 个 Agent Note（`2026-08-20-explicit-web-interface-bind.*`）+ `docs/ai-app-platform-development-prompt.zh.md` + 2 个 harness 会话产物目录（`.dsh-pilot/`、`.dsh-uploads/`，建议经 020 入 .gitignore）+ **新增 `qwen-x-profile.md`（pilot_snapshot 的 X 主页快照导出=工具会话产物，非用户代码，建议人工清理）**。建议人工收尾这 7 项（工作区干净后完整模式直接可落地 001，修复清单已就绪）。
 - ~~**第五轮发布结果**~~：已解决——第五轮状态提交 `7b3c955131` 推送 fork `evolve/state` 成功（含第四轮遗留 96dae81cf6）。
-- **PR 创建权限**：状态已推送至 fork `evolve/state`（`https://github.com/nightq/deepseek-harness/tree/evolve/state`；第七轮推送后 tip=99d9158c72），但自动化 `gh pr create` 被拒（nightq 对上游 `deepseek-ai/deepseek-harness` 仅 `pull:true`，GraphQL 拒 CreatePullRequest，REST pulls 404）。第八轮 `gh pr list --head nightq:evolve/state` 确认**仍无现存 PR**。需人工创建 PR（head `nightq:evolve/state` → base `master`，title 建议 `chore(evolve): 每日进化状态 2026-08-27`）或为 nightq 开通上游 PR 创建权限。注：本轮本地 HEAD 领先 fork 分支 0 提交（fork tip 已含第七轮提交），推送为快进。
+- **PR 创建权限**：状态已推送至 fork `evolve/state`（`https://github.com/nightq/deepseek-harness/tree/evolve/state`；第八轮两次推送后 tip=54d902e23a），但自动化 `gh pr create` 被拒（nightq 对上游 `deepseek-ai/deepseek-harness` 仅 `pull:true`，GraphQL 拒 CreatePullRequest，REST pulls 404；2026-08-27 08:06 续跑实例实测）。第八轮 `gh pr list --head nightq:evolve/state` 确认**仍无现存 PR**。需人工创建 PR（head `nightq:evolve/state` → base `master`，title 建议 `chore(evolve): 每日进化状态 2026-08-27`）或为 nightq 开通上游 PR 创建权限。注：本轮推送成功两次（99d9158c72..12d9b57eb0、12d9b57eb0..54d902e23a，均快进），PR 创建实测被拒（GraphQL CreatePullRequest 权限不足）→ 不重试，等待人工建 PR。
 - ~~**fork/PR 发布授权**~~：已解决——用户指示建立 fork，2026-08-21 已创建 `nightq/deepseek-harness` 并配置本地 `fork` remote；第二轮打通 evolve/state 发布链路。
 - **研究焦点轮换**：第八轮已覆盖 #3 Cordis 插件生态 + #4 技能自我进化（弱点优先：001 hygiene 基线首次实测 11/13 绿、2 失败，修复清单就绪）；下轮建议 #5 安全加固 + #2 MCP 生态（或按弱点：001 落地验证后核对 hygiene 是否全绿；009/010 若进入落地评审，落地形态已就绪）。
 - **排程（需人工确认）**：2026-08-27 每日 08:05 定时实例与手动会话并行各跑一轮第八轮——状态文件 last-writer-wins，并行会互相踩踏；本轮经 reflog 核对与收敛补充解决（双方结论一致）。建议确认进化轮排程源（cron/自动化），避免同日多实例，或在排程入口加「当日是否已运行」检查。
