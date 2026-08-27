@@ -99,3 +99,13 @@
 - 情境：第七轮在途从 109 项缩至 6 项，其中 `.dsh-pilot/`（截图/下载）与 `.dsh-uploads/`（上传文件）是 harness 自身会话产物而非用户代码——它们持续污染 git status，反复触发研究模式降级误判。
 - 教训：工作区状态判断与 RUNLOG 在途清单要分类标注「用户在途工作 vs 工具产物」；工具产物（截图/下载/上传缓存）应经 BACKLOG 条目（020）纳入 .gitignore，避免长期污染 status 与状态发布检查；无法改动时在 RUNLOG 明示类别。
 - 适用：工作区状态判断、RUNLOG 在途清单记录；不适用于完整模式（工作区干净时无此问题）。
+
+### 2026-08-27 · 研究模式跑只读门禁采集基线 = 把抽象条目变成具体修复清单
+- 情境：第八轮在 001（hygiene 基线）落地前，先在研究模式运行 `pnpm run hygiene` 实测基线（运行前后对比 `git status --porcelain` 确认无新文件）——结果 11/13 绿、2 失败，每个失败都定位到根因与修复动作（constraints→`pnpm run clean` 清理 refactor 残留；vendor rescope→更新 rescope-vendor.ts 两处期望片段）。
+- 教训：研究模式虽禁代码改动，但运行不改源码的只读检查门禁是合法且高价值的弱点采集——基线数据把「落地 001」从抽象任务变成「修复 2 个漂移」的具体清单，完整模式一启动即可直接执行；检查命令若产生文件则仅记录不落地。
+- 适用：所有「先落地后验证」类条目的预研（001/007/011 等）；不适用于需要网络/key 的门禁（test:e2e、snapshot:record）。
+
+### 2026-08-27 · hygiene 门禁失败根因多为「重构残留 + 检查脚本期望漂移」
+- 情境：hygiene 的 constraints 失败=`packages/client/schema-form`、`web-react` 空壳残留（refactor(client) 合并后 lib/node_modules 未清理，无 package.json）；vendor rescope 失败=`knip.json` 的 `packages/util/home` 块被上游更新移走（moved）+ 中文文档链接修复成 `../rescope.zh.md` 后检查脚本仍期望 `../rescope.md`（partial）。
+- 教训：这类漂移是「高质量」杠杆的真实信号——重构 PR 合并后应跑 `pnpm run clean` + `pnpm run hygiene` 验证；rescope/检查脚本的期望片段会随仓库结构漂移，hygiene 基线能系统抓住它们；修复=更新期望片段对照当前文件事实（而非改文件迁就脚本）。
+- 适用：001 落地、重构后验证、vendor 同步轮次；不适用于无漂移语义的全新代码审计。
