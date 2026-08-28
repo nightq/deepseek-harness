@@ -1,6 +1,6 @@
 # 状态（STATE）
 
-_最后更新：2026-08-27（第八轮，研究模式：Cordis 生态 + 技能自我进化；001 hygiene 基线首次实测 11/13 绿、2 失败，修复清单就绪；在途 6→7；漂移实测 ahead=1/behind=0；SKILL.md 固化「研究模式只读门禁采集基线」）_
+_最后更新：2026-08-28（第九轮，研究模式：上游 0.1.2-alpha.1 跨基线复核 + #7 依赖与代码卫生 + #5 MCP 安全新权威；漂移剧变 0→1079；001 修复清单收窄为仅 clean；009/010/018 缺口跨版本全部成立）_
 
 ## 使命
 
@@ -17,7 +17,7 @@ _最后更新：2026-08-27（第八轮，研究模式：Cordis 生态 + 技能�
   5. 安全加固：提示注入防御、工具沙箱化、权限最小化
   6. 性能：启动时间、包体、agent-loop 延迟
   7. 依赖与代码卫生：dead code、hand-rolled-where-dependency-exists
-- 轮换记录：第 1 轮 #5 安全加固 + #1 agent 循环；第 2 轮 #2 MCP 生态 + #6 性能；第 3 轮 #4 技能自我进化 + #7 依赖与代码卫生；第 4 轮 #3 Cordis/Koishi 插件生态 + #1 agent 循环（含 Lilian Weng 自进化 harness 文献）；第 5 轮 #5 安全加固 + #2 MCP 生态（009/010 双证据链审计）；第 6 轮 #6 性能 + #4 技能自我进化（018 agent-loop 会话级步骤预算立项、019 StackOne Defender 拒绝、漂移归零核实）；第 7 轮 #2 MCP 生态 + #1 agent 循环（009/010 落地形态按官方 spec 细化：远端描述=不可信 hint、确定性控制优先；018 获 Oracle 停止条件权威）；第 8 轮 #3 Cordis 插件生态 + #4 技能自我进化 + **弱点优先：001 hygiene 基线首次实测**（研究模式跑只读门禁，11/13 绿、2 失败，修复清单就绪：clean 清理 refactor 残留 + rescope-vendor.ts 期望片段更新；SKILL.md 固化「研究模式可运行只读门禁采集基线」）；**下轮建议 #5 安全加固 + #2 MCP 生态（或按弱点：001 落地验证后核对 hygiene 是否全绿；009/010 若进入落地评审，落地形态已就绪）**。
+- 轮换记录：第 1 轮 #5 安全加固 + #1 agent 循环；第 2 轮 #2 MCP 生态 + #6 性能；第 3 轮 #4 技能自我进化 + #7 依赖与代码卫生；第 4 轮 #3 Cordis/Koishi 插件生态 + #1 agent 循环（含 Lilian Weng 自进化 harness 文献）；第 5 轮 #5 安全加固 + #2 MCP 生态（009/010 双证据链审计）；第 6 轮 #6 性能 + #4 技能自我进化（018 agent-loop 会话级步骤预算立项、019 StackOne Defender 拒绝、漂移归零核实）；第 7 轮 #2 MCP 生态 + #1 agent 循环（009/010 落地形态按官方 spec 细化：远端描述=不可信 hint、确定性控制优先；018 获 Oracle 停止条件权威）；第 8 轮 #3 Cordis 插件生态 + #4 技能自我进化 + **弱点优先：001 hygiene 基线首次实测**（研究模式跑只读门禁，11/13 绿、2 失败，修复清单就绪：clean 清理 refactor 残留 + rescope-vendor.ts 期望片段更新；SKILL.md 固化「研究模式可运行只读门禁采集基线」）；**第 9 轮 #7 依赖与代码卫生 + #5 MCP 安全新权威 + 弱点优先：上游 0.1.2-alpha.1 跨基线复核**（漂移剧变 0→1079；**001 修复清单收窄**——rescope-vendor.ts 两处期望已由上游修复，仅剩 `pnpm run clean`；009 tools.ts L166 证据行未漂移、010 connection.ts 上游 0 提交、018 agent.ts while(true) 仍在→三缺口跨版本全部成立；新权威 Speakeasy：协议无数据/指令边界=结构性根因、version pinning by hash=010 指纹的业界标准形态、网关层=harness 拦截点；OWASP MCP06 防御=context isolation/instruction quarantine）；**下轮建议 #1 agent 循环 + #6 性能（或按弱点：001 落地后核对 hygiene 是否全绿）**。
 
 ## 进化杠杆（可观察指标）
 
@@ -59,29 +59,30 @@ _最后更新：2026-08-27（第八轮，研究模式：Cordis 生态 + 技能�
 - **第 6 轮**：完成研究（#6 性能 + #4 技能自我进化，弱点评测优先：漂移归零核实 + 循环预算缺口挖掘）+ **018 只读核实**（agent-loop 会话级步骤预算真空缺：agent.ts L199/L212/L263/L339 while 循环无上限、maxTokens 仅单步、constants.ts 仅单步并行上限，外部三源共识印证）+ **019 拒绝**（StackOne Defender 检测型防御：与第一轮既定原则冲突、新依赖违反护栏）。**漂移归零**：人工 2026-08-24 10:59 merge origin/master（commit 89ed947a41）→ 落后 743→0，merge 未触碰进化路径。仍因工作区脏（**109 项**在途，web bind-address + 新 ai-app-platform 双功能在途）为研究模式；001 升级 accepted（首落候选）。
 - **第 7 轮**：完成研究（#2 MCP 生态 + #1 agent 循环，弱点评测优先：009/010 落地评审前的「描述变更最小化方案」补充评估）+ **009/010 复验与落地形态细化**（新 checkout b150a551b8 上证据行未变；官方 spec 锚点——Client Best Practices「工具定义=不可信输入、客户端侧策展」、Tool Annotations「hints 默认不可信、安全保证放确定性控制」、DigitalApplied taxonomy「description=server 编写必填直接展示给模型」→ 009 最小改动=描述来源标注，010 最小安全子集=指纹+变更日志，re-prompt 仅可选 UX）+ **018 权威再+1**（Oracle 停止条件清单：iteration cap 默认 10）+ **020 立项**（`.dsh-pilot/`、`.dsh-uploads/` 会话产物入 .gitignore，P2）。**在途 109→6 项**（web bind-address 与 ai-app-platform 代码已提交 master，仅剩 3 note + 1 文档 + 2 会话产物目录）；**本地 master 已被重置/重克隆为 origin/master**（b150a551b8，0 前 0 后，无历史 chore(evolve) 提交，进化历史仅存 fork evolve/state 且领先本地）→ 仍为研究模式；漂移实测 0/0。
 - **第 8 轮**：完成研究（#3 Cordis 生态 + #4 技能自我进化 + 弱点优先：001 hygiene 基线实测）+ **001 基线首次实测**——`pnpm run hygiene` = 11 passed / 2 failed（运行前后 git status 无新文件，未污染工作区；失败与在途文件无关）：①constraints：`packages/client/schema-form`、`web-react` 空壳残留（refactor(client) 合并后 lib/node_modules 未清理，无 package.json）→ 修复=`pnpm run clean`；②vendor rescope：`knip.json` `packages/util/home` 块 moved + `adding-a-vendored-package.zh.md` 链接 partial（`../rescope.zh.md` vs 期望 `../rescope.md`）→ 修复=更新 rescope-vendor.ts 两处期望片段。**修复清单已就绪**，001 落地时执行（需完整模式）+ **SKILL.md 进程级修订**（研究节固化「研究模式可运行只读门禁采集基线」）。仍因工作区脏（**7 项**未跟踪 = 3 note + 1 docs + `.dsh-pilot/` + `.dsh-uploads/` + 新增 `qwen-x-profile.md` 工具快照产物）为研究模式；漂移实测 ahead=1（第七轮 chore(evolve)）/ behind=0。**收敛补充（并行实例核对）**：本轮由每日 08:05 定时实例（commit `12d9b57eb0`）与本次会话并行各跑一轮，双方独立复现同一基线（交叉验证）；CI 覆盖归因——`rescope-vendor:check` 不在 CI（仅本地 hygiene/check-all）、constraints 失败为本地机器残留（CI 全新建树不受影响），上游 CI 不因此红。
-- **第 6 轮起**：状态发布常开；代码落地仅在工作区干净时。落地顺序：001 hygiene 基线（基线已实测，修复清单就绪：clean + rescope 期望片段更新）→ 009 MCP 描述信任标记（审计已完成，落地形态已细化，需人工评审）→ 010 定义指纹监控（最小安全子集不触 interaction/，需人工评审）→ 018 会话级步骤预算（落地形态待人工决策）→ 020 .gitignore 会话产物（quick win）→ 低风险 P2 条目（013 技能目录审计、017 已落地）。受保护路径条目（003-005/012/015/016）待人工授权。
+- **第 9 轮**：完成研究（#7 依赖与代码卫生 + #5 MCP 安全新权威 + 弱点优先：上游 0.1.2-alpha.1 跨基线复核）+ **跨基线核验**（非门禁、非代码改动，仅只读 git 操作，未污染工作区）——①漂移剧变：`git fetch origin` 实测 **behind=0→1079**（origin/master=cd5ef81481=release/dsh-0.1.2-alpha.1，agent-presets 迁移/top-level examples 退役等大规模重构），ahead=4 全为 chore(evolve)；**upstream 未触碰 `.agents/evolution/` 与 `.agents/skills/dsh-self-evolve/`**；②**001 修复清单收窄**：rescope-vendor.ts 两处期望已由上游修复（`knip-logger-console` ExactEdit 删除、`vendoring-cookbook-name-invariant-zh` 期望更新为 `../rescope.zh.md`）→ 落地 001 仅需 `pnpm run clean`（本地 schema-form/web-react 残留确认仍在）+ rebase 后重跑 hygiene 验证；③**009/010/018 缺口跨版本全部成立**（tools.ts L166 证据行未漂移、connection.ts 上游 0 提交、agent.ts while(true) 仍在且无步骤上限）；④新权威：Speakeasy「协议无数据/指令边界=结构性根因」「version pinning by hash=rug-pull 确定性控制」「网关层=harness 拦截点」+ OWASP MCP06 官方防御 → 009/010 落地形态获双权威确认。仍因工作区脏（29 项在途）为研究模式；漂移实测 ahead=4 / behind=1079（研究模式不强行 rebase）。
+- **第 6 轮起**：状态发布常开；代码落地仅在工作区干净时。落地顺序：**001 hygiene 基线（基线已实测；第九轮跨基线复核后修复清单收窄：rescope 期望已由上游 0.1.2-alpha.1 修复，仅剩 `pnpm run clean` 清理本地残留；落地前先 rebase origin/master，预期无冲突）** → 009 MCP 描述信任标记（审计+新权威确认，落地形态已细化，需人工评审）→ 010 定义指纹监控（version pinning by hash 业界标准形态，最小安全子集不触 interaction/，需人工评审）→ 018 会话级步骤预算（缺口跨版本成立，落地形态待人工决策）→ 020 .gitignore 会话产物（quick win）→ 低风险 P2 条目（013 技能目录审计、017 已落地）。受保护路径条目（003-005/012/015/016）待人工授权。
 
 ## 进化统计
 
 | 指标 | 值 | 备注 |
 | --- | --- | --- |
-| 累计轮次 | 8 | 2026-08-21 两轮（初始化验证 + 研究）、2026-08-22 两轮、2026-08-24 两轮、2026-08-26 一轮、2026-08-27 一轮 |
-| 落地代码改动数 | 0 | 八轮均因工作区脏降级研究模式；017 与第八轮 SKILL.md 修订为进程级（不计代码） |
+| 累计轮次 | 9 | 2026-08-21 两轮（初始化验证 + 研究）、2026-08-22 两轮、2026-08-24 两轮、2026-08-26 一轮、2026-08-27 一轮（含并行实例）、2026-08-28 一轮 |
+| 落地代码改动数 | 0 | 九轮均因工作区脏降级研究模式；017 与第八轮 SKILL.md 修订为进程级（不计代码） |
 | 合并 PR 数 | 0 | 状态持续推送 fork `evolve/state`，PR 创建被拒（权限），待人工建 PR |
 | 回滚数 | 0 | 无已合并进化改动 |
-| 门禁失败数 | 0（进化改动触发）；**基线采集 2 失败** | 无代码改动未触发门禁；第八轮研究模式实测 hygiene 基线 11/13 绿、2 失败（constraints + vendor rescope，仓库现状弱点非进化改动导致，修复清单见 001） |
-| 与上游漂移 | **ahead=2 / behind=0（本轮实测）** | HEAD=54d902e23a（第八轮两个 chore(evolve) 状态提交：12d9b57eb0 状态 + 54d902e23a 收敛补充）；origin/master=b150a551b8/dsh-v0.1.1-rc.2（2026-08-21 20:03 起上游无新提交）；领先提交全为进化提交，rebase 无意义 |
+| 门禁失败数 | 0（进化改动触发）；**基线采集 2 失败** | 无代码改动未触发门禁；第八轮研究模式实测 hygiene 基线 11/13 绿、2 失败（constraints + vendor rescope）；**第九轮跨基线复核：rescope 两失败已由上游 0.1.2-alpha.1 修复，仅剩本地 constraints 残留（clean 可清）** |
+| 与上游漂移 | **ahead=4 / behind=1079（本轮实测）** | HEAD=1f9de1865f（第八轮补录提交，与 fork evolve/state tip 一致）；origin/master=cd5ef81481=**release/dsh-0.1.2-alpha.1**（2026-08-21 后上游首次发布，1079 提交含大规模重构）；领先提交全为进化提交；upstream 未触碰进化路径 → rebase 预期无冲突 |
 
 ## 待人工决策
 
 - **MCP 009/010 落地形态评审**：第五轮只读审计完成（双证据链：本地代码失衡行级证据 + OWASP MCP Top 10/Christian Schneider/imti.co 外部权威），缺口确认；第七轮按官方 spec 细化落地形态——①官方 Client Best Practices（2026-07-28）：工具定义=不可信输入，naive host 原样透传是反模式，客户端侧策展为最佳实践；②官方 Tool Annotations（2026-03-16）：annotations 为「hint」，客户端 MUST 默认不可信，**「实际安全保证放确定性控制」** → 009 最小改动=描述来源标注（server 名前缀，模型可见输入变更，需评审 + 按 testing policy 补快照）；010 最小安全子集=定义指纹对比 + 变更日志事件（确定性控制，spec 合规基线，不触 `interaction/`），re-prompt 仅可选 UX。落地评审待人工。
 - **受保护路径授权**：BACKLOG 003/004/005（提示注入边界、系统提示缓存、凭据脱敏）改动面落在 `session/`、`guard/`、`credentials/`，需人工授权具体改动范围后方可自动落地；012（错误分类 nudge）若落点 guard 同样需授权；**015（工具瞬时失败重试）/016（会话级预算断路器）落点均涉 `guard/`，第四轮已核验缺口真实，落地同样需授权**。
 - **018 落地形态（需人工决策）**：agent-loop 会话级步骤/迭代预算缺口第六轮只读核实（行级证据：agent.ts while 循环无上限 + 外部三源共识）。落地形态 A）改 `packages/core/agent-loop`（非受保护路径，但需同步 docs/architecture.md + SDK 表面 + testing policy 快照）；B）guard 插件事件计数熔断（受保护路径需授权）。与 016（token/成本预算）同族，建议一起出设计。
-- **上游同步与在途功能**：~~本地落后 origin/master 743 提交~~ **已解决**——2026-08-24 10:59 人工 merge（commit `89ed947a41`）；第八轮实测 ahead=1（第七轮 chore(evolve) 状态提交 99d9158c72）/ behind=0，上游自 b150a551b8 无新提交。**在途 7 项**（较第七轮 +1）：3 个 Agent Note（`2026-08-20-explicit-web-interface-bind.*`）+ `docs/ai-app-platform-development-prompt.zh.md` + 2 个 harness 会话产物目录（`.dsh-pilot/`、`.dsh-uploads/`，建议经 020 入 .gitignore）+ **新增 `qwen-x-profile.md`（pilot_snapshot 的 X 主页快照导出=工具会话产物，非用户代码，建议人工清理）**。建议人工收尾这 7 项（工作区干净后完整模式直接可落地 001，修复清单已就绪）。
+- **上游同步与在途功能**：~~本地落后 origin/master 743 提交~~ ~~已解决（2026-08-24 人工 merge `89ed947a41`；第八轮 ahead=1/behind=0）~~ **第九轮新情况：上游发布 0.1.2-alpha.1（cd5ef81481），behind 剧变 0→1079**（agent-presets 迁移至 packages/preset/、top-level examples 退役等大规模重构）；upstream 未触碰进化路径，rebase 预期无冲突；研究模式不强行 rebase。**在途 29 项**（16 修改 + 13 未跟踪）：`packages/session/session-persistence-jsonl/*`、`packages/client/*`（modules/web/boot 等）、`packages/session/session-persistence/src/coordinator.ts`、3 项 web bind-address Agent Note、`docs/ai-app-platform-development-prompt.zh.md`、`.dsh-pilot/`、`.dsh-uploads/`、`qwen-x-profile.md` 等。**001 修复清单已收窄**（rescope 期望由上游修复，仅剩 `pnpm run clean`）。建议人工收尾在途后完整模式：rebase → clean → 落地 001 → hygiene 验证。
 - ~~**第五轮发布结果**~~：已解决——第五轮状态提交 `7b3c955131` 推送 fork `evolve/state` 成功（含第四轮遗留 96dae81cf6）。
-- **PR 创建权限**：状态已推送至 fork `evolve/state`（`https://github.com/nightq/deepseek-harness/tree/evolve/state`；第八轮两次推送后 tip=54d902e23a），但自动化 `gh pr create` 被拒（nightq 对上游 `deepseek-ai/deepseek-harness` 仅 `pull:true`，GraphQL 拒 CreatePullRequest，REST pulls 404；2026-08-27 08:06 续跑实例实测）。第八轮 `gh pr list --head nightq:evolve/state` 确认**仍无现存 PR**。需人工创建 PR（head `nightq:evolve/state` → base `master`，title 建议 `chore(evolve): 每日进化状态 2026-08-27`）或为 nightq 开通上游 PR 创建权限。注：本轮推送成功两次（99d9158c72..12d9b57eb0、12d9b57eb0..54d902e23a，均快进），PR 创建实测被拒（GraphQL CreatePullRequest 权限不足）→ 不重试，等待人工建 PR。
+- **PR 创建权限**：状态已推送至 fork `evolve/state`（`https://github.com/nightq/deepseek-harness/tree/evolve/state`；第八轮 tip=54d902e23a，第九轮本地 HEAD=1f9de1865f 与其一致，本轮将推送第九轮状态提交），但自动化 `gh pr create` 被拒（nightq 对上游 `deepseek-ai/deepseek-harness` 仅 `pull:true`，GraphQL 拒 CreatePullRequest，REST pulls 404；2026-08-27 08:06 续跑实例实测）。第八轮 `gh pr list --head nightq:evolve/state` 确认**仍无现存 PR**。需人工创建 PR（head `nightq:evolve/state` → base `master`，title 建议 `chore(evolve): 每日进化状态 2026-08-28`）或为 nightq 开通上游 PR 创建权限。注：PR 创建实测被拒（GraphQL CreatePullRequest 权限不足）→ 不重试，等待人工建 PR。
 - ~~**fork/PR 发布授权**~~：已解决——用户指示建立 fork，2026-08-21 已创建 `nightq/deepseek-harness` 并配置本地 `fork` remote；第二轮打通 evolve/state 发布链路。
-- **研究焦点轮换**：第八轮已覆盖 #3 Cordis 插件生态 + #4 技能自我进化（弱点优先：001 hygiene 基线首次实测 11/13 绿、2 失败，修复清单就绪）；下轮建议 #5 安全加固 + #2 MCP 生态（或按弱点：001 落地验证后核对 hygiene 是否全绿；009/010 若进入落地评审，落地形态已就绪）。
+- **研究焦点轮换**：第九轮已覆盖 #7 依赖与代码卫生 + #5 MCP 安全新权威（弱点优先：上游 0.1.2-alpha.1 跨基线复核——001 修复清单收窄、009/010/018 缺口跨版本成立）；下轮建议 #1 agent 循环 + #6 性能（或按弱点：001 落地验证后核对 hygiene 是否全绿；009/010 若进入落地评审，落地形态已获双权威确认）。
 - **排程（需人工确认）**：2026-08-27 每日 08:05 定时实例与手动会话并行各跑一轮第八轮——状态文件 last-writer-wins，并行会互相踩踏；本轮经 reflog 核对与收敛补充解决（双方结论一致）。建议确认进化轮排程源（cron/自动化），避免同日多实例，或在排程入口加「当日是否已运行」检查。
 
 （每日运行在此追加需人工决策的事项；处理后可删除条目）
