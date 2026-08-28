@@ -19,6 +19,10 @@
 
 第八轮由每日 08:05 定时实例（commit `12d9b57eb0`，已推送 fork `evolve/state`）与本次会话**并行各跑一轮**。双方独立复现同一结论——hygiene 基线 11/13、同样的 2 个失败与修复配方、在途 6→7（`qwen-x-profile.md` 归为工具会话产物）、漂移 ahead=1/behind=0——交叉验证通过，基线结论高置信。本次会话仅作补充性收敛：①**CI 覆盖归因**：`rescope-vendor:check` 不在 CI（仅本地 hygiene/check-all），constraints 失败为本地机器残留（CI 全新建树不受影响）→ 上游 CI 不因此红，但 codemod 与树失同步真实存在（下次 vendor 同步会咬）；②并发运行事实与处理教训（见 MEMORY 2026-08-27「并发实例检测」）。排程建议：避免同日多实例并行（last-writer-wins 会踩状态文件）。
 
+## 2026-08-28 并行实例核对（收敛补充）
+
+第九轮由每日 08:05 定时实例（commit `0b38ddfabb` 状态 + `60509542b2` 发布补录，已推送 fork `evolve/state`，tip=60509542b2，PR 创建实测被拒）与本次会话**并行各跑一轮（连续第二轮——排程修复未落地）**。双方独立结论一致——漂移 behind=1079（0.1.2-alpha.1）、001 修复清单收窄为仅 clean（rescope 期望由上游修复）、009/010/018 缺口跨版本成立、Speakeasy/OWASP MCP06 新权威。本次会话仅作补充性收敛（对方未覆盖的事实）：①**hygiene 复测实证**：`CI=true pnpm run hygiene` 实测仍 11/13 绿、同 2 失败（vendor rescope + constraints），运行前后 `git status --porcelain` 均 29 项、无新文件未污染 → 本地残留确认在（对方为推断，我方为实测），rescope 失败根因为本地脚本期望过期（上游已修）；②**在途清单实测 15M + 14?? = 29**（对方记 16+13，以实测为准），补充两类信号——`packages/session/session-persistence-jsonl/*` + `coordinator.ts` 触碰**受保护路径** `session/`（jsonl stale-append recovery 在途修复）；已归档 note `2026-07-20-jsonl-storage-identity.*` 被修改（归档冻结政策下异常，提请人工确认）；新增工具产物 `.workbuddy/`、`_tmp_*`×3（020 范围扩展候选）；③**009 基线事实补充**：server-qualified 公共工具名（`publicToolName`/`mcp__<serverName>__<rawName>`）在本地基线 b150a551b8 已存在（7 处命中）→ 来源标注由工具名承担是基线既有事实，009 缺口跨版本成立结论不变；④**并发碰撞连续两轮复现**：排程「当日是否已运行」检查未落地，第八、九轮连续双实例踩踏状态文件；具体机制建议（`git ls-remote fork evolve/state` tip 日期==今天则退出 / 单实例排程）已升级写入 STATE 待人工决策。本轮收敛补充提交与推送见 git log（`60509542b2..<收敛提交>` 快进 fork `evolve/state`）。
+
 ## 待人工决策
 
 - **安全加固条目触碰受保护路径**：BACKLOG 003/004/005（提示注入边界、系统提示缓存友好、凭据脱敏）改动面落在 `session/`、`guard/`、`credentials/` 等受保护路径，按护栏需人工授权改动范围后才能落地；012（错误分类 nudge）若落点 guard 同样需授权；**015（工具瞬时失败重试）/016（会话级 token/成本预算断路器）第四轮已核验缺口真实，落点涉 `guard/`，落地同样需授权**。
