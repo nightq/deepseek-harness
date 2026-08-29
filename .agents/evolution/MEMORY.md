@@ -149,3 +149,18 @@
 - 情境：第九轮定时实例已完成状态+补录+收敛三轮提交；本手动会话先 `grep -c` 确认对方记录中 CVE-2025-54136/CSA/CISA/AgentMelt 全部 0 命中，才写入自己的新权威与 010 升级；同时对对方四条关键声明（漂移 1079、009/010/018 证据行、001 rescope 期望已修、server-qualified 工具名基线既有）逐一 `git show <ref>:<path>` 独立复验，全部通过。
 - 教训：并发轮次的收敛补充必须遵守「净新增」纪律——写入前 grep 查重（对方已覆盖的不重复），写入后对对方的关键事实声明做独立复验并在 RUNLOG 记录结果（交叉验证才有审查价值）；无净新事实时如实记录「无补充」，不制造重复内容。
 - 适用：所有并发/多实例轮次的收敛阶段；不适用于单实例轮次（无对方声明可复验）。
+
+### 2026-08-29 · 本地 master 被人为 rebase 后，fork 分支必然非快进：先核实内容再删分支重推
+- 情境：第十轮开工发现本地 HEAD（4defd7a7d9）与 fork evolve/state tip（908ed2214e）同名但 SHA/树不同（reflog 证实 00:21 有人对本地 master 执行 rebase 到 origin/master 0.1.2-alpha.1，9 个 chore(evolve) 提交重放，漂移 behind 1079→0）；先 `git diff <fork-tip> <local-HEAD> -- .agents/evolution .agents/skills/dsh-self-evolve` 确认进化路径内容零差异（rebase 无损），才判定可删分支重推。
+- 教训：rebase（含人工/他实例做的）会重写全部提交 SHA，使 fork 分支与本地呈非快进关系；发布前先做「内容等价性核实」（diff 限定进化路径）+ 看 reflog 确认 rebase 事件，再按协议删分支重推——不要因为「同一批提交」就假设快进，也不要未核实就删分支（万一进化路径内容在 rebase 中丢失）。
+- 适用：本地 master 被 merge/rebase/重克隆过的轮次；不适用于连续快进轮次（fork tip 是本地 HEAD 祖先）。
+
+### 2026-08-29 · 依赖失同步是门禁超时的隐蔽根因：先修环境再判定门禁结果，lockfile 在途时宁可不跑
+- 情境：第十轮 `CI=true pnpm run hygiene` 完整跑超时被杀；诊断发现 `pnpm install` 报 ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY——本地 node_modules 与 rebase 后树失同步（上游 0.1.2-alpha.1 重构了依赖），knip 扫描旧依赖树卡死；且 `pnpm-lock.yaml` 本身是在途修改文件（用户在途 jsonl 修复的一部分），研究模式下不能跑 install 改写它。
+- 教训：rebase 大版本后本地 node_modules 必然过期，跑 hygiene/knip 前先确认依赖同步状态（`pnpm install --offline` 试跑看是否报 deps-status 错）；门禁超时≠代码有问题，先查环境；**lockfile 在途被改时研究模式禁止 install**（会污染用户在途工作），如实记录「环境失同步，待完整模式 install 后复测」，不强行判定门禁绿/红。
+- 适用：rebase/merge 大版本后的门禁运行、研究模式基线采集；不适用于工作区干净且依赖同步的完整模式（正常跑门禁）。
+
+### 2026-08-29 · 001 修复清单「收窄→可能已完成」的完整路径：外部修复 + 上游移除 + 仅剩验证
+- 情境：001（hygiene 基线）修复清单从第八轮「clean + 更新 rescope 两处期望」→ 第九轮上游修 rescope（收窄为仅 clean）→ 第十轮 `pnpm run constraints` 实测绿（exit=0）+ 残留目录 `packages/client/schema-form`、`web-react` 已消失（**上游 0.1.2-alpha.1 重构直接移除了这两个包**，origin/master `packages/client/` 仅剩 `web`）→ 修复清单收窄为「完整模式 rebase 后重跑 hygiene 全绿确认，若绿则 done」。
+- 教训：对「落地前先核对上游是否已动」的教训（2026-08-28）要追踪到终点——条目修复清单可能被上游分两步消化（先修脚本期望、再删包），最终变成「零修复动作、仅验证」；残留目录消失要区分「本地 clean 清了」vs「上游重构删了包」（`git ls-tree origin/master packages/client/` 可证）；这类条目落地时若确认全绿应转 done，避免永远停在 accepted。
+- 适用：带修复清单的 BACKLOG 条目跨版本追踪（001/011 等）；不适用于单轮即刻落地的条目。
